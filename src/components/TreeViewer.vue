@@ -138,13 +138,18 @@ svg {
   fill: var(--color-background);
   stroke: var(--color-border);
   stroke-width: 1px;
+  cursor: pointer;
+}
+
+.node rect:hover {
+  stroke: var(--color-border-hover);
 }
 
 .node[data-selected="true"] rect {
-  fill: var(--vt-c-indigo);
+  fill: var(--color-primary);
 }
 .node[data-selected="true"] text {
-  fill: var(--vt-c-text-dark-1);
+  fill: var(--color-text-dark);
 }
 
 .node {
@@ -155,5 +160,8 @@ svg {
   fill: none;
   stroke: var(--color-border);
   stroke-width: 1.5px;
+}
+.name {
+  pointer-events: none;
 }
 </style>

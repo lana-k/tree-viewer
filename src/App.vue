@@ -77,7 +77,12 @@ function onDetailClose (node) {
 #node-details {
   min-width: 200px;
   max-width: 400px;
+  max-height: 100%;
+  overflow: auto;
   width: 25vw;
   padding: 16px;
+}
+#node-details > * + * {
+	margin-top: 16px;
 }
 </style>

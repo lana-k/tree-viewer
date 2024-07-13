@@ -5,6 +5,20 @@
   font-weight: normal;
 }
 
+button {
+  border: none;
+  cursor: pointer;
+}
+
+.primary-btn {
+  padding: 4px 12px;
+  background-color: var(--color-primary);
+  color: var(--color-text-dark);
+}
+.primary-btn:hover {
+  background-color: var(--color-primary-hover);
+}
+
 
 
 
