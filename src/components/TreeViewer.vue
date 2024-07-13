@@ -8,6 +8,7 @@ const props = defineProps({
     required: true
   }
 })
+const emit = defineEmits(['node-selected', 'node-deselected'])
 
 const nodes = ref([])
 const links = ref([])
@@ -70,11 +71,26 @@ watch(() => props.hierarchyData, async () => {
   zoomToFit()
 })
 
+
+function toggleNodeSelection(node) {
+  const nodeElement = node.el
+  if (nodeElement.dataset.selected === "true") {
+    nodeElement.dataset.selected = "false"
+    emit('node-deselected', node)
+  } else {
+    nodeElement.dataset.selected = "true"
+    emit('node-selected', node)
+  }
+}
+defineExpose({
+  toggleNodeSelection
+})
+
 </script>
 
 <template>
   <div class="svg-container">
-    <svg width="100%" height="800">
+    <svg width="100%" height="100%">
       <g>
         <path  
           v-for="(link, index) in links"
@@ -87,6 +103,9 @@ watch(() => props.hierarchyData, async () => {
           :key="node.name"
           class="node"
           :transform="`translate(${node.y},${node.x})`"
+          @click="toggleNodeSelection({ 
+            data: node.data, el: $event.target.closest('g')
+          })"
         >
           <rect 
             :x="-(boxWidth / 2)" 
@@ -111,7 +130,7 @@ svg {
   display: block;
 }
 .svg-container {
-  margin: 32px;
+  height: 100%;
   border: 1px solid var(--color-border);
 }
 
@@ -119,6 +138,13 @@ svg {
   fill: var(--color-background);
   stroke: var(--color-border);
   stroke-width: 1px;
+}
+
+.node[data-selected="true"] rect {
+  fill: var(--vt-c-indigo);
+}
+.node[data-selected="true"] text {
+  fill: var(--vt-c-text-dark-1);
 }
 
 .node {
