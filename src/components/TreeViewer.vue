@@ -1,15 +1,22 @@
 <script setup>
 import * as d3 from "d3"
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, computed } from 'vue'
 
 const props = defineProps({
   hierarchyData: {
     type: Object,
     required: true
+  },
+  direction: {
+    type: String,
+    required: false,
+    default: 'left-right'
   }
 })
 const emit = defineEmits(['node-selected', 'node-deselected'])
 
+const tree = ref(null)
+const root = ref(null)
 const nodes = ref([])
 const links = ref([])
 
@@ -20,13 +27,35 @@ const minScale = 0.1
 const maxScale = 1.5
 
 function elbow(d) {
-  return (
-    'M' + d.source.y + ',' + d.source.x +
-    'H' + (d.source.y + (d.target.y - d.source.y) / 2) +
-    'V' + d.target.x +
-    'H' + d.target.y
-  )
+  if (props.direction === 'left-right') {
+    return (
+      'M' + d.source.y + ',' + d.source.x +
+      'H' + (d.source.y + (d.target.y - d.source.y) / 2) +
+      'V' + d.target.x +
+      'H' + d.target.y
+    )
+  } else {
+    return (
+      'M' + d.source.x + ',' + d.source.y +
+      'V' + (d.source.y + (d.target.y - d.source.y) / 2) +
+      'H' + d.target.x +
+      'V' + d.target.y
+    )
+  }
 }
+
+function getNodeTranslate(node) {
+  if (props.direction === 'left-right') {
+    return `translate(${node.y},${node.x})`
+  } else {
+    return `translate(${node.x},${node.y})`
+  }
+}
+
+const treeLayoutNodeSize = computed(() => props.direction === 'left-right'
+    ? [boxHeight + nodeGap, boxWidth + nodeGap]
+    : [boxWidth + nodeGap, boxHeight + nodeGap]
+)
 
 const zoom = d3.zoom()
   .scaleExtent([minScale, maxScale])
@@ -37,15 +66,15 @@ const zoom = d3.zoom()
 function buildTree () {
     d3.select('svg').call(zoom)
 
-    const root = d3.stratify()
+    root.value = d3.stratify()
       .id(d => d.name)
       .parentId(d => d.parent)(props.hierarchyData)
 
-    const tree = d3.tree().nodeSize([boxHeight + nodeGap, boxWidth + nodeGap])
-    tree(root)
+    tree.value = d3.tree().nodeSize(treeLayoutNodeSize.value)
+    tree.value(root.value)
     
-    links.value = root.links()
-    nodes.value = root.descendants()
+    links.value = root.value.links()
+    nodes.value = root.value.descendants()
 }
 
 function zoomToFit () {
@@ -67,6 +96,14 @@ function zoomToFit () {
 
 watch(() => props.hierarchyData, async () => {
   buildTree()
+  await nextTick()
+  zoomToFit()
+})
+
+watch(() => props.direction, async () => {
+  tree.value.nodeSize(treeLayoutNodeSize.value)
+  tree.value(root.value)
+  
   await nextTick()
   zoomToFit()
 })
@@ -102,7 +139,7 @@ defineExpose({
           v-for="node in nodes"
           :key="node.name"
           class="node"
-          :transform="`translate(${node.y},${node.x})`"
+          :transform="getNodeTranslate(node)"
           @click="toggleNodeSelection({ 
             data: node.data, el: $event.target.closest('g')
           })"
@@ -132,6 +169,7 @@ svg {
 .svg-container {
   height: 100%;
   border: 1px solid var(--color-border);
+  background-color: var(--color-background);
 }
 
 .node rect {

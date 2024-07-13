@@ -28,8 +28,13 @@ function removeSelectedNode(nodeToRemove) {
 }
 
 function onDetailClose (node) {
-  removeSelectedNode(node)
   treeViewerRef.value.toggleNodeSelection(node)
+}
+
+const treeDirection = ref('left-right')
+function toggleTreeDirection () {
+  treeDirection.value = treeDirection.value === 'left-right'
+    ? 'top-bottom' : 'left-right'
 }
 </script>
 
@@ -44,12 +49,18 @@ function onDetailClose (node) {
       />
     </aside>
     <div id="main-container">
-      <header>  
+      <header>
+        <button 
+          class="primary-btn"
+          @click="toggleTreeDirection">
+          Toggle tree direction
+        </button>  
       </header>
       
       <main>
         <tree-viewer
           ref="treeViewerRef"
+          :direction="treeDirection"
           :hierarchy-data="hierarchyData"
           @node-selected="addSelectedNode($event)"
           @node-deselected="removeSelectedNode($event)"
@@ -65,6 +76,10 @@ function onDetailClose (node) {
   height: 100vh;
 }
 
+header {
+  padding: 12px 32px;
+}
+
 #main-container {
   flex-grow: 1;
   display: flex;
@@ -72,7 +87,7 @@ function onDetailClose (node) {
 }
 #main-container main {
   flex-grow: 1;
-  padding: 32px;
+  padding: 0 32px 32px;
 }
 #node-details {
   min-width: 200px;
