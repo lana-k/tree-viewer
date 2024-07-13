@@ -1,7 +1,20 @@
 <script setup>
 import TreeViewer from './components/TreeViewer.vue'
 import NodeCard from './components/NodeCard.vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+import api from '@/api/hierarchyApi';
+
+const hierarchyData = ref([])
+async function getHierarchy () {
+  try {
+    const res = await api.getHierarchy()
+    hierarchyData.value = res.data
+  } catch (err) {
+    console.error(err)
+  }
+} 
+getHierarchy()
+
 const selectedNodes = reactive([])
 </script>
 
@@ -19,7 +32,7 @@ const selectedNodes = reactive([])
       </header>
       
       <main>
-        <tree-viewer />
+        <tree-viewer :hierarchy-data="hierarchyData"/>
       </main>
     </div>
   </div>
