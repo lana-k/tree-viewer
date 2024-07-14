@@ -16,7 +16,7 @@ defineEmits(['close'])
       class="primary-btn close-btn"
       @click="$emit('close', node)"
     >
-      <i class="fa-solid fa-xmark"></i>
+      <font-awesome-icon icon="fa-solid fa-xmark" />
     </button>
     <h1>{{ node.data.name }}</h1>
     <p>{{ node.data.description }}</p>
