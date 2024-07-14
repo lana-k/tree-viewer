@@ -24,6 +24,10 @@ defineEmits(['close'])
 </template>
 
 <style scoped>
+h1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .node-card {
   background-color: var(--color-background);
   border: 1px solid var(--color-border);

@@ -19,27 +19,36 @@ const tree = ref(null)
 const root = ref(null)
 const nodes = ref([])
 const links = ref([])
+const svgRef = ref([])
 
 const boxWidth = 150
 const boxHeight = 40
+const maxNameLength = 12
 const nodeGap = 50
 const minScale = 0.1
 const maxScale = 1.5
 
-function elbow(d) {
+function truncateString(str, maxLength) {
+    if (str.length > maxLength) {
+        return str.substring(0, maxLength - 3) + '...'
+    }
+    return str
+}
+
+function elbow(link) {
   if (props.direction === 'left-right') {
     return (
-      'M' + d.source.y + ',' + d.source.x +
-      'H' + (d.source.y + (d.target.y - d.source.y) / 2) +
-      'V' + d.target.x +
-      'H' + d.target.y
+      'M' + link.source.y + ',' + link.source.x +
+      'H' + (link.source.y + (link.target.y - link.source.y) / 2) +
+      'V' + link.target.x +
+      'H' + link.target.y
     )
   } else {
     return (
-      'M' + d.source.x + ',' + d.source.y +
-      'V' + (d.source.y + (d.target.y - d.source.y) / 2) +
-      'H' + d.target.x +
-      'V' + d.target.y
+      'M' + link.source.x + ',' + link.source.y +
+      'V' + (link.source.y + (link.target.y - link.source.y) / 2) +
+      'H' + link.target.x +
+      'V' + link.target.y
     )
   }
 }
@@ -60,11 +69,11 @@ const treeLayoutNodeSize = computed(() => props.direction === 'left-right'
 const zoom = d3.zoom()
   .scaleExtent([minScale, maxScale])
   .on('zoom', e => {
-    d3.select('svg g').attr('transform', e.transform)
+    d3.select(svgRef.value).select('g').attr('transform', e.transform)
   })
   
 function buildTree () {
-    d3.select('svg').call(zoom)
+    d3.select(svgRef.value).call(zoom)
 
     root.value = d3.stratify()
       .id(d => d.name)
@@ -78,8 +87,9 @@ function buildTree () {
 }
 
 function zoomToFit () {
-    const box = d3.select('svg g').node().getBBox()
-    const svgBox = d3.select('svg').node().getBoundingClientRect()
+    const d3Svg = d3.select(svgRef.value)
+    const box = d3Svg.select('g').node().getBBox()
+    const svgBox = svgRef.value.getBoundingClientRect()
 
     const scale = Math.min(svgBox.width / box.width, svgBox.height / box.height)
     
@@ -89,9 +99,7 @@ function zoomToFit () {
       .scale(Math.min(Math.max(scale, minScale), 1))
       .translate(-box.x - box.width / 2, -box.y - box.height / 2)
       
-    d3.select('svg')
-    .call(zoom.transform, transform)
-	
+    d3Svg.call(zoom.transform, transform)	
 }
 
 watch(() => props.hierarchyData, async () => {
@@ -127,7 +135,7 @@ defineExpose({
 
 <template>
   <div class="svg-container">
-    <svg width="100%" height="100%">
+    <svg ref="svgRef" width="100%" height="100%">
       <g>
         <path  
           v-for="(link, index) in links"
@@ -151,7 +159,7 @@ defineExpose({
             :height="boxHeight"
           />
           <text dx="-65" dy="0" text-anchor="start" class="name">
-            {{ node.data.name }}
+            {{ truncateString(node.data.name, maxNameLength) }}
           </text>
         </g>
         
