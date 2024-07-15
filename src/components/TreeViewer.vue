@@ -1,6 +1,7 @@
 <script setup>
 import * as d3 from "d3"
-import { ref, watch, nextTick, computed } from 'vue'
+import { ref, watch, nextTick, computed, onMounted } from 'vue'
+import { truncateString } from '@/lib/utils.js'
 
 const props = defineProps({
   hierarchyData: {
@@ -28,12 +29,7 @@ const nodeGap = 50
 const minScale = 0.1
 const maxScale = 1.5
 
-function truncateString(str, maxLength) {
-    if (str.length > maxLength) {
-        return str.substring(0, maxLength - 3) + '...'
-    }
-    return str
-}
+
 
 function elbow(link) {
   if (props.direction === 'left-right') {
@@ -65,15 +61,23 @@ const treeLayoutNodeSize = computed(() => props.direction === 'left-right'
     ? [boxHeight + nodeGap, boxWidth + nodeGap]
     : [boxWidth + nodeGap, boxHeight + nodeGap]
 )
+const isEmptyHierarchy = computed(
+  () => !props.hierarchyData || props.hierarchyData.length === 0
+)
 
 const zoom = d3.zoom()
   .scaleExtent([minScale, maxScale])
   .on('zoom', e => {
     d3.select(svgRef.value).select('g').attr('transform', e.transform)
   })
-  
+
+
 function buildTree () {
-    d3.select(svgRef.value).call(zoom)
+    if (isEmptyHierarchy.value) {
+      links.value = []
+      nodes.value = []
+      return
+    }
 
     root.value = d3.stratify()
       .id(d => d.name)
@@ -98,9 +102,18 @@ function zoomToFit () {
       .translate(svgBox.width / 2, svgBox.height / 2)
       .scale(Math.min(Math.max(scale, minScale), 1))
       .translate(-box.x - box.width / 2, -box.y - box.height / 2)
-      
+
     d3Svg.call(zoom.transform, transform)	
 }
+
+onMounted(async () => {
+  if (!isEmptyHierarchy.value) {
+    buildTree()
+    await nextTick()
+    zoomToFit()
+  }
+  d3.select(svgRef.value).call(zoom)
+})
 
 watch(() => props.hierarchyData, async () => {
   buildTree()
@@ -109,6 +122,9 @@ watch(() => props.hierarchyData, async () => {
 })
 
 watch(() => props.direction, async () => {
+  if (isEmptyHierarchy.value) {
+    return
+  }
   tree.value.nodeSize(treeLayoutNodeSize.value)
   tree.value(root.value)
   

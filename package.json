@@ -8,9 +8,16 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:unit": "vitest",
+    "test:unit:coverage": "vitest run --coverage",
     "test:e2e": "start-server-and-test preview http://localhost:4173 'cypress run --e2e'",
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "coverage:final:merge": "istanbul-merge --out coverage-report/coverage.json coverage-unit/coverage-final.json coverage-e2e-json/out.json",
+    "coverage:final:report": "nyc report --report-dir coverage-report -e='.vue' --reporter lcov"
+  },
+  "nyc": {
+    "report-dir": "coverage-e2e-report",
+    "temp-dir": "coverage-e2e-json"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
@@ -20,15 +27,19 @@
     "vue": "^3.4.29"
   },
   "devDependencies": {
+    "@cypress/code-coverage": "^3.12.41",
     "@vitejs/plugin-vue": "^5.0.5",
+    "@vitest/coverage-istanbul": "^1.6.0",
     "@vue/test-utils": "^2.4.6",
     "cypress": "^13.12.0",
     "eslint": "^8.57.0",
     "eslint-plugin-cypress": "^3.3.0",
     "eslint-plugin-vue": "^9.23.0",
+    "istanbul-merge": "^2.0.0",
     "jsdom": "^24.1.0",
     "start-server-and-test": "^2.0.4",
     "vite": "^5.3.1",
+    "vite-plugin-istanbul": "^6.0.2",
     "vitest": "^1.6.0"
   }
 }

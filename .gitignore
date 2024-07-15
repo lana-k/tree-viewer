@@ -11,7 +11,10 @@ node_modules
 .DS_Store
 dist
 dist-ssr
-coverage
+coverage-e2e-json
+coverage-e2e-report
+coverage-report
+coverage-unit
 *.local
 
 /cypress/videos/
