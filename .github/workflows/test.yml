@@ -15,6 +15,22 @@ jobs:
       with:
         node-version: 18.x
     - name: Install the project
-      run: npm install  
+      run: npm install
+  
     - name: Run lint
       run: npm run lint -- --no-fix
+
+    - name: Run unit tests
+      run: npm run test:unit:coverage
+    - name: Run e2e tests
+      run: npm run test:e2e
+    - name: Merge coverage
+      run: npm run coverage:final:merge
+    - name: Build coverage report
+      run: npm run coverage:final:report
+
+    - name: Artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: coverage
+        path: coverage-report/lcov-report
