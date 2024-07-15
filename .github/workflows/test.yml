@@ -1,4 +1,4 @@
-name: Run tests
+name: Run tests and deply
 on:
   workflow_dispatch:
   push:
@@ -7,6 +7,7 @@ on:
 
 jobs:
   test:
+    name: Quality checks
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
@@ -34,3 +35,30 @@ jobs:
       with:
         name: coverage
         path: coverage-report/lcov-report
+
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 18.x
+    - name: npm install and build
+      run: |
+        npm install
+        npm run build
+
+    - name: Create archive
+      run: |
+        cd dist
+        zip -9 -r  dist.zip .
+
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@3.6.2
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: build
+        FOLDER: dist/
+        CLEAN: true
