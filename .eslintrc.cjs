@@ -16,6 +16,10 @@ module.exports = {
       ]
     }
   ],
+  rules: {
+    'space-before-function-paren': ['error', 'always'],
+    'quotes': ['error', 'single']
+  },
   parserOptions: {
     ecmaVersion: 'latest'
   }

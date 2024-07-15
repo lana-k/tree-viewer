@@ -1,5 +1,5 @@
 <script setup>
-import * as d3 from "d3"
+import * as d3 from 'd3'
 import { ref, watch, nextTick, computed, onMounted } from 'vue'
 import { truncateString } from '@/lib/utils.js'
 
@@ -29,9 +29,7 @@ const nodeGap = 50
 const minScale = 0.1
 const maxScale = 1.5
 
-
-
-function elbow(link) {
+function elbow (link) {
   if (props.direction === 'left-right') {
     return (
       'M' + link.source.y + ',' + link.source.x +
@@ -49,7 +47,7 @@ function elbow(link) {
   }
 }
 
-function getNodeTranslate(node) {
+function getNodeTranslate (node) {
   if (props.direction === 'left-right') {
     return `translate(${node.y},${node.x})`
   } else {
@@ -70,7 +68,6 @@ const zoom = d3.zoom()
   .on('zoom', e => {
     d3.select(svgRef.value).select('g').attr('transform', e.transform)
   })
-
 
 function buildTree () {
     if (isEmptyHierarchy.value) {
@@ -132,14 +129,13 @@ watch(() => props.direction, async () => {
   zoomToFit()
 })
 
-
-function toggleNodeSelection(node) {
+function toggleNodeSelection (node) {
   const nodeElement = node.el
-  if (nodeElement.dataset.selected === "true") {
-    nodeElement.dataset.selected = "false"
+  if (nodeElement.dataset.selected === 'true') {
+    nodeElement.dataset.selected = 'false'
     emit('node-deselected', node)
   } else {
-    nodeElement.dataset.selected = "true"
+    nodeElement.dataset.selected = 'true'
     emit('node-selected', node)
   }
 }
@@ -177,8 +173,7 @@ defineExpose({
           <text dx="-65" dy="0" text-anchor="start" class="name">
             {{ truncateString(node.data.name, maxNameLength) }}
           </text>
-        </g>
-        
+        </g> 
       </g>
     </svg>
   </div>

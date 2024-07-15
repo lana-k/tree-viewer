@@ -5,7 +5,8 @@ import { ref } from 'vue'
 import api from '@/api/hierarchyApi';
 
 const hierarchyData = ref([])
-async function getHierarchy () {
+
+async function loadHierarchy () {
   try {
     const res = await api.getHierarchy()
     hierarchyData.value = res.data
@@ -13,16 +14,16 @@ async function getHierarchy () {
     console.error(err)
   }
 } 
-getHierarchy()
+loadHierarchy()
 
 const selectedNodes = ref([])
 const treeViewerRef = ref(null)
 
-function addSelectedNode(node) {
+function addSelectedNode (node) {
   selectedNodes.value.push(node)
 }
 
-function removeSelectedNode(nodeToRemove) {
+function removeSelectedNode (nodeToRemove) {
   selectedNodes.value = selectedNodes.value
     .filter(node => node.data.name !== nodeToRemove.data.name)
 }

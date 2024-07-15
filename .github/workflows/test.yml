@@ -1,0 +1,13 @@
+name: Run tests
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Run lint
+      run: npm run lint -- --no-fix
