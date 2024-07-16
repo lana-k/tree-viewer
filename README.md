@@ -1,14 +1,21 @@
 # tree-viewer
 
-This template should help get you started developing with Vue 3 in Vite.
+This is a hierarchy viewer made with D3 and Vue.js. You can try it on 
+[Github Pages](https://lana-k.github.io/tree-viewer/).
 
-## Recommended IDE Setup
+Click the node to see the node details. Click the node again to deselect it. 
+You can also deselect the node by clicking "X" button in the corresponding 
+window with the node details.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+The tree can be displayed from left to right or from top to bottom. 
+Click "Toggle tree direction" to switch the direction. 
+By default, the tree is rendered from left to right. The node selection state 
+doesn't change during the tree direction switching.
 
-## Customize configuration
+Use the mouse wheel to zoom in/out. Drag to pan. On initial rendering, the tree 
+is zoomed to fit the view box.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+To change the tree data replace `tree.json` in `public` folder of the build. 
 
 ## Project Setup
 
@@ -34,20 +41,16 @@ npm run build
 npm run test:unit
 ```
 
+### Run Unit Tests with coverage
+
+```sh
+npm run test:unit:coverage
+```
+
 ### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
 
 ```sh
 npm run test:e2e:dev
-```
-
-This runs the end-to-end tests against the Vite development server.
-It is much faster than the production build.
-
-But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
-
-```sh
-npm run build
-npm run test:e2e
 ```
 
 ### Lint with [ESLint](https://eslint.org/)

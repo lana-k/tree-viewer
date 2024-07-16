@@ -1,6 +1,6 @@
 export default {
   async getHierarchy () {
-    const res = await fetch('dummyData.json')
+    const res = await fetch('tree.json')
     return res.json()
   }
 }

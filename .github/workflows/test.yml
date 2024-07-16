@@ -25,16 +25,18 @@ jobs:
       run: npm run test:unit:coverage
     - name: Run e2e tests
       run: npm run test:e2e
-    - name: Merge coverage
-      run: npm run coverage:final:merge
-    - name: Build coverage report
-      run: npm run coverage:final:report
 
-    - name: Artifacts
+    - name: Unit tests coverage artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: coverage
-        path: coverage-report/lcov-report
+        name: coverage-unit
+        path: coverage-unit/lcov-report
+
+    - name: E2e tests coverage artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: coverage-e2e
+        path: coverage-e2e-report/lcov-report    
 
   deploy:
     name: Deploy to GitHub Pages
